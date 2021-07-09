@@ -21,6 +21,15 @@
 ```
 
 ## 如何使用离线资源包
+## 注意：准备离线包的机器一定要是minimal系统，否则离线包下载一定是不完整的！！！
+## 注意：务必修改 calico.yaml 中image后的镜像版本
+## 注意：当有pod一直处于pendding时，参考：https://blog.csdn.net/a772304419/article/details/111549920
+#  [root@localhost k8sOfflineSetup]# kubectl taint nodes k8s-master node-role.kubernetes.io/master:NoSchedule-
+#   node/k8s-master untainted
+#  [root@localhost k8sOfflineSetup]# kubectl describe node k8s-master | grep Taint
+#
+#
+
 
 - [离线安装Kubernetes v1.17.1 - 准备离线资源包](https://www.jianshu.com/p/93e7cb4da070)
 - [离线安装Kubernetes v1.17.1 - 离线部署](https://www.jianshu.com/p/fd9f1076ea2d)

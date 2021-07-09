@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#强制卸载
+rpm -qa | grep libxml2 | xargs rpm -e --nodeps
+rpm -qa | grep deltarpm| xargs rpm -e --nodeps
+#安装
 rpm -ivh ../packages/deltarpm*
 rpm -ivh ../packages/libxml2*
 rpm -ivh ../packages/python-deltarpm*

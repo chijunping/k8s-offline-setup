@@ -16,34 +16,46 @@ fi
 echo "${MASTER_IP}    ${APISERVER_NAME}" >> /etc/hosts
 
 # 查看完整配置选项 https://godoc.org/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta2
-rm -f ./kubeadm-config.yaml
-cat <<EOF > ./kubeadm-config.yaml
-apiVersion: kubeadm.k8s.io/v1beta2
-kind: ClusterConfiguration
-kubernetesVersion: v1.17.1
-controlPlaneEndpoint: "${APISERVER_NAME}:6443"
-networking:
-  serviceSubnet: "10.96.0.0/16"
-  podSubnet: "${POD_SUBNET}"
-  dnsDomain: "cluster.local"
-EOF
+#rm -f ./kubeadm-config.yaml
+#cat <<EOF > ./kubeadm-config.yaml
+#apiVersion: kubeadm.k8s.io/v1beta2
+#kind: ClusterConfiguration
+#kubernetesVersion: v1.17.1
+#controlPlaneEndpoint: "${APISERVER_NAME}:6443"
+#networking:
+#  serviceSubnet: "10.96.0.0/16"
+#  podSubnet: "${POD_SUBNET}"
+#  dnsDomain: "cluster.local"
+#EOF
 
 # kubeadm init
 # 根据您服务器网速的情况，您需要等候 3 - 10 分钟
-kubeadm init --config=kubeadm-config.yaml --upload-certs
+#kubeadm init --config=kubeadm-config.yaml --upload-certs
+
+rm -f /etc/sysconfig/kubelet
+cat <<EOF > /etc/sysconfig/kubelet
+KUBELET_CGROUP_ARGS="--cgroup-driver=systemd"
+KUBE_PROXY_MODE="ipvs"
+EOF
+
+
+kubeadm init \
+--kubernetes-version=v1.17.17 \
+--pod-network-cidr=10.11.10.0/16 \
+--service-cidr=10.96.0.0/12 \
+--apiserver-advertise-address=192.168.56.112
 
 # 配置 kubectl
 rm -rf /root/.kube/
 mkdir /root/.kube/
 cp -i /etc/kubernetes/admin.conf /root/.kube/config
+chown $(id -u):$(id -g) /root/.kube/config
 
 # 安装 calico 网络插件
 # 参考文档 https://docs.projectcalico.org/v3.10/getting-started/kubernetes/
 echo "安装calico-3.10.3"
-rm -f calico.yaml
-cp ../plugins/calico-v3.10.3.yaml ./calico.yaml
-sed -i "s#192\.168\.0\.0/16#${POD_SUBNET}#" calico.yaml
-kubectl apply -f calico.yaml
+sed -i "s#192\.168\.56\.0/16#${POD_SUBNET}#" ../plugins/calico.yaml
+kubectl apply -f ../plugins/calico.yaml
 
 # 安装 nginx ingress controll
 echo "安装nginx ingress controll"
@@ -51,6 +63,7 @@ kubectl apply -f ../plugins/ingress-nginx-v0.29.0.yaml
 
 # 安装 Dashboard
 echo "安装 Dashboard"
+kubectl create ns kubernetes-dashboard
 kubectl apply -f ../plugins/dashboard-auth.yaml
 kubectl apply -f ../plugins/dashboard-v2.0.0-rc5.yaml
 

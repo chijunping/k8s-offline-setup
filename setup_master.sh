@@ -36,3 +36,4 @@ source ./install_docker.sh
 source ./install_kubernetes.sh
 source ./initial_master.sh
 cd ..
+kubectl version
