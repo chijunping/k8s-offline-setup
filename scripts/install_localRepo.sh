@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rpm -ivh ../packages/deltarpm*
-rpm -ivh ../packages/libxml2-python*
+rpm -ivh ../packages/libxml2*
 rpm -ivh ../packages/python-deltarpm*
 rpm -ivh ../packages/createrepo*
 
