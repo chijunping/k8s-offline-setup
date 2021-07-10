@@ -23,11 +23,11 @@
 ## 如何使用离线资源包
 ## 注意：准备离线包的机器一定要是minimal系统，否则离线包下载一定是不完整的！！！
 ## 注意：务必修改 calico.yaml 中image后的镜像版本
-## 注意：当有pod一直处于pendding时，参考：https://blog.csdn.net/a772304419/article/details/111549920
-#  [root@localhost k8sOfflineSetup]# kubectl taint nodes k8s-master node-role.kubernetes.io/master:NoSchedule-
-#   node/k8s-master untainted
+## 注意：当有pod一直处于pendding时，不要着急，等有node可用于schedule（调度）后，就会调度到node节点上，如果还不行则参考查看下是不是节点有污点，如果有则去除污点即可
+#  参考：https://blog.csdn.net/a772304419/article/details/111549920
 #  [root@localhost k8sOfflineSetup]# kubectl describe node k8s-master | grep Taint
-#
+#  [root@localhost k8sOfflineSetup]# kubectl taint nodes k8s-master node-role.kubernetes.io/master:NoSchedule-
+#  [root@localhost k8sOfflineSetup]# kubectl describe node k8s-master | grep Taint
 #
 
 
